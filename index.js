@@ -35,13 +35,18 @@ module.exports.setup = function (cb) {
 	], cb);
 };
 
-module.exports.validate = function (service, receipt, cb) {
+module.exports.validate = function (service, receipt, options, cb) {
+    if (typeof options === 'function') {
+        cb = options;
+        options = null;
+    }
+
 	switch (service) {
 		case module.exports.APPLE:
 			apple.validatePurchase(null, receipt, cb);
 			break;
 		case module.exports.GOOGLE:
-			google.validatePurchase(null, receipt, cb);
+			google.validatePurchase(null, receipt, options, cb);
 			break;
 		case module.exports.WINDOWS:
 			windows.validatePurchase(receipt, cb);
@@ -54,7 +59,11 @@ module.exports.validate = function (service, receipt, cb) {
 	}
 };
 
-module.exports.validateOnce = function (service, secretOrPubKey, receipt, cb) {
+module.exports.validateOnce = function (service, secretOrPubKey, receipt, options, cb) {
+	if (typeof options == 'function') {
+        cb = options;
+        options = null;
+    }
 	
 	if (!secretOrPubKey && service !== module.exports.APPLE && service !== module.exports.WINDOWS) {
 		verbose.log('<.validateOnce>', service, receipt);
@@ -66,7 +75,7 @@ module.exports.validateOnce = function (service, secretOrPubKey, receipt, cb) {
 			apple.validatePurchase(secretOrPubKey, receipt, cb);
 			break;
 		case module.exports.GOOGLE:
-			google.validatePurchase(secretOrPubKey, receipt, cb);
+			google.validatePurchase(secretOrPubKey, receipt, options, cb);
 			break;
 		case module.exports.WINDOWS:
 			windows.validatePurchase(receipt, cb);
